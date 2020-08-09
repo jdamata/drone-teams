@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -32,10 +33,35 @@ func (p *Plugin) Validate() error {
 // Execute provides the implementation of the plugin.
 func (p *Plugin) Execute() error {
 
-	// Set card color to green or red
+	// Default card color is green
 	themeColor := "96FF33"
+
+	// Create list of card facts
+	facts := []MessageCardSectionFact{
+		{
+			Name:  "Git Author",
+			Value: p.pipeline.Commit.Author,
+		},
+		{
+			Name:  "Commit Message",
+			Value: p.pipeline.Commit.Message,
+		},
+		{
+			Name:  "Commit Link",
+			Value: p.pipeline.Commit.Link,
+		}}
+
+	// If build has failed, change card details
 	if p.pipeline.Build.Status == "failure" {
 		themeColor = "FF5733"
+		facts = append(facts, MessageCardSectionFact{
+			Name:  "Failed Stages",
+			Value: strings.Join(p.pipeline.Build.FailedStages, " "),
+		})
+		facts = append(facts, MessageCardSectionFact{
+			Name:  "Failed Steps",
+			Value: strings.Join(p.pipeline.Build.FailedSteps, " "),
+		})
 	}
 
 	// Create rich message card body
@@ -46,28 +72,16 @@ func (p *Plugin) Execute() error {
 		Summary:    p.pipeline.Build.Status,
 		Sections: []MessageCardSection{{
 			ActivityTitle:    "Build status -> " + p.pipeline.Build.Status,
-			ActivitySubtitle: "Repo Name -> " + p.pipeline.Repo.Link,
+			ActivitySubtitle: "Repo Name -> " + p.pipeline.Repo.HTTPURL,
 			ActivityImage:    "https://github.com/jdamata/drone-teams/raw/master/drone.png",
 			Markdown:         true,
-			Facts: []MessageCardSectionFact{
-				{
-					Name:  "Git Author",
-					Value: p.pipeline.Commit.Author,
-				},
-				{
-					Name:  "Commit Message",
-					Value: p.pipeline.Commit.Message,
-				},
-				{
-					Name:  "Commit Link",
-					Value: p.pipeline.Commit.Link,
-				},
-			},
+			Facts:            facts,
 		}},
 	}
+
 	log.Info("Generated card: ", card)
 
-	// Make MS teams webhook post
+	// MS teams webhook post
 	jsonValue, _ := json.Marshal(card)
 	_, err := http.Post(p.settings.Webhook, "application/json", bytes.NewBuffer(jsonValue))
 	if err != nil {
