@@ -13,7 +13,7 @@ export GOARCH=amd64
 export CGO_ENABLED=0
 export GO111MODULE=on
 
-go build -a -tags netgo -o release/linux/amd64/drone-download ./cmd/drone-teams
+go build -a -tags netgo -o release/linux/amd64/drone-teams ./cmd/drone-teams
 ```
 
 ## Docker

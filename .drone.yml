@@ -40,7 +40,7 @@ steps:
   pull: always
   image: golang:1.14
   commands:
-  - "go build -a -tags netgo -o release/linux/amd64/drone-download ./cmd/drone-teams"
+  - "go build -a -tags netgo -o release/linux/amd64/drone-teams ./cmd/drone-teams"
   environment:
     CGO_ENABLED: 0
     GO111MODULE: on
@@ -53,7 +53,7 @@ steps:
   pull: always
   image: golang:1.14
   commands:
-  - "go build -a -tags netgo -o release/linux/amd64/drone-download ./cmd/drone-teams"
+  - "go build -a -tags netgo -o release/linux/amd64/drone-teams ./cmd/drone-teams"
   environment:
     CGO_ENABLED: 0
     GO111MODULE: on
