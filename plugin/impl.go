@@ -5,9 +5,17 @@
 
 package plugin
 
+import (
+	"bytes"
+	"encoding/json"
+	"net/http"
+
+	log "github.com/sirupsen/logrus"
+)
+
 // Settings for the plugin.
 type Settings struct {
-	// Fill in the data structure with appropriate values
+	Webhook string
 }
 
 // Validate handles the settings validation of the plugin.
@@ -18,6 +26,44 @@ func (p *Plugin) Validate() error {
 
 // Execute provides the implementation of the plugin.
 func (p *Plugin) Execute() error {
-	// Implementation of the plugin.
+
+	// Set card color to green or red
+	themeColor := "96FF33"
+	if p.pipeline.Build.Status == "Failed" {
+		themeColor = "FF5733"
+	}
+
+	// Create rich message card body
+	card := MessageCard{
+		Type:       "MessageCard",
+		Context:    "http://schema.org/extensions",
+		ThemeColor: themeColor,
+		Summary:    p.pipeline.Build.Status,
+		Sections: []MessageCardSection{{
+			ActivityTitle:    p.pipeline.Build.Action,
+			ActivitySubtitle: p.pipeline.Repo.Name,
+			ActivityImage:    "https://drone.io/images/logo-f06b66939d.svg",
+			Markdown:         true,
+			Facts: []MessageCardSectionFact{
+				{
+					Name:  "Author",
+					Value: p.pipeline.Commit.Author,
+				},
+				{
+					Name:  "Commit",
+					Value: p.pipeline.Commit.Message,
+				},
+				{
+					Name:  "Link",
+					Value: p.pipeline.Commit.Link,
+				},
+			},
+		}},
+	}
+
+	// Make MS teams webhook post
+	jsonValue, _ := json.Marshal(card)
+	resp, err := http.Post(p.settings.Webhook, "application/json", bytes.NewBuffer(jsonValue))
+	log.Info(resp, err)
 	return nil
 }
