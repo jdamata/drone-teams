@@ -1,3 +1,4 @@
+[![Build Status](https://cloud.drone.io/api/badges/jdamata/drone-teams/status.svg)](https://cloud.drone.io/jdamata/drone-teams)
 # drone-teams
 
 Drone plugin to send teams notifications for build status
