@@ -1,7 +1,6 @@
 FROM plugins/base:linux-arm64
 
-LABEL maintainer=""Joel Damata <joel.damata94@gmail.com>"" \
-  org.label-schema.name="" \
+LABEL maintainer="Joel Damata <joel.damata94@gmail.com>" \
   org.label-schema.vendor="Drone.IO Community" \
   org.label-schema.schema-version="1.0"
 
