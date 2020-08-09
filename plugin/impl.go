@@ -42,7 +42,7 @@ func (p *Plugin) Execute() error {
 		Sections: []MessageCardSection{{
 			ActivityTitle:    p.pipeline.Build.Action,
 			ActivitySubtitle: p.pipeline.Repo.Name,
-			ActivityImage:    "https://drone.io/images/logo-f06b66939d.svg",
+			ActivityImage:    "https://github.com/jdamata/drone-teams/raw/master/drone.png",
 			Markdown:         true,
 			Facts: []MessageCardSectionFact{
 				{
@@ -63,7 +63,11 @@ func (p *Plugin) Execute() error {
 
 	// Make MS teams webhook post
 	jsonValue, _ := json.Marshal(card)
-	resp, err := http.Post(p.settings.Webhook, "application/json", bytes.NewBuffer(jsonValue))
-	log.Info(resp, err)
+	log.Info(p.settings.Webhook)
+	_, err := http.Post(p.settings.Webhook, "application/json", bytes.NewBuffer(jsonValue))
+	if err != nil {
+		log.Error("Failed to send request to teams webhook")
+		return err
+	}
 	return nil
 }
