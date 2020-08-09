@@ -1,0 +1,9 @@
+FROM plugins/base:linux-arm
+
+LABEL maintainer=""Joel Damata <joel.damata94@gmail.com>"" \
+  org.label-schema.name="" \
+  org.label-schema.vendor="Drone.IO Community" \
+  org.label-schema.schema-version="1.0"
+
+ADD release/linux/arm/drone-teams /bin/
+ENTRYPOINT [ "/bin/drone-teams" ]
