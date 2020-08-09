@@ -48,17 +48,6 @@ steps:
     event:
     - push
     - pull_request
-
-- name: build-tag
-  pull: always
-  image: golang:1.14
-  commands:
-  - "go build -a -tags netgo -o release/linux/amd64/drone-teams ./cmd/drone-teams"
-  environment:
-    CGO_ENABLED: 0
-    GO111MODULE: on
-  when:
-    event:
     - tag
 
 - name: executable
@@ -66,22 +55,6 @@ steps:
   image: golang:1.14
   commands:
   - ./release/linux/amd64/drone-teams --help
-
-- name: dryrun
-  pull: always
-  image: plugins/docker:linux-amd64
-  settings:
-    dockerfile: docker/Dockerfile.linux.amd64
-    dry_run: true
-    password:
-      from_secret: docker_password
-    repo: jdamata/teams
-    tags: linux-amd64
-    username:
-      from_secret: docker_username
-  when:
-    event:
-    - pull_request
 
 - name: publish
   pull: always
@@ -92,7 +65,7 @@ steps:
     dockerfile: docker/Dockerfile.linux.amd64
     password:
       from_secret: docker_password
-    repo: jdamata/teams
+    repo: jdamata/drone-teams
     username:
       from_secret: docker_username
   when:
@@ -118,7 +91,7 @@ platform:
 steps:
 - name: build-push
   pull: always
-  image: golang:1.11
+  image: golang:1.14
   commands:
   - "go build -v -ldflags \"-X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/linux/arm64/drone-teams"
   environment:
@@ -128,40 +101,13 @@ steps:
     event:
     - push
     - pull_request
-
-- name: build-tag
-  pull: always
-  image: golang:1.11
-  commands:
-  - "go build -v -ldflags \"-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/linux/arm64/drone-teams"
-  environment:
-    CGO_ENABLED: 0
-    GO111MODULE: on
-  when:
-    event:
     - tag
 
 - name: executable
   pull: always
-  image: golang:1.11
+  image: golang:1.14
   commands:
   - ./release/linux/arm64/drone-teams --help
-
-- name: dryrun
-  pull: always
-  image: plugins/docker:linux-arm64
-  settings:
-    dockerfile: docker/Dockerfile.linux.arm64
-    dry_run: true
-    password:
-      from_secret: docker_password
-    repo: jdamata/teams
-    tags: linux-arm64
-    username:
-      from_secret: docker_username
-  when:
-    event:
-    - pull_request
 
 - name: publish
   pull: always
@@ -172,7 +118,7 @@ steps:
     dockerfile: docker/Dockerfile.linux.arm64
     password:
       from_secret: docker_password
-    repo: jdamata/teams
+    repo: jdamata/drone-teams
     username:
       from_secret: docker_username
   when:
