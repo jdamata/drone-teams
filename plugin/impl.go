@@ -34,7 +34,7 @@ func (p *Plugin) Execute() error {
 
 	// Set card color to green or red
 	themeColor := "96FF33"
-	if p.pipeline.Build.Status == "Failed" {
+	if p.pipeline.Build.Status == "failure" {
 		themeColor = "FF5733"
 	}
 
@@ -45,26 +45,27 @@ func (p *Plugin) Execute() error {
 		ThemeColor: themeColor,
 		Summary:    p.pipeline.Build.Status,
 		Sections: []MessageCardSection{{
-			ActivityTitle:    p.pipeline.Build.Action,
-			ActivitySubtitle: p.pipeline.Repo.Name,
+			ActivityTitle:    "Build status -> " + p.pipeline.Build.Status,
+			ActivitySubtitle: "Repo Name -> " + p.pipeline.Repo.Link,
 			ActivityImage:    "https://github.com/jdamata/drone-teams/raw/master/drone.png",
 			Markdown:         true,
 			Facts: []MessageCardSectionFact{
 				{
-					Name:  "Author",
+					Name:  "Git Author",
 					Value: p.pipeline.Commit.Author,
 				},
 				{
-					Name:  "Commit",
+					Name:  "Commit Message",
 					Value: p.pipeline.Commit.Message,
 				},
 				{
-					Name:  "Link",
+					Name:  "Commit Link",
 					Value: p.pipeline.Commit.Link,
 				},
 			},
 		}},
 	}
+	log.Info("Generated card: ", card)
 
 	// Make MS teams webhook post
 	jsonValue, _ := json.Marshal(card)
