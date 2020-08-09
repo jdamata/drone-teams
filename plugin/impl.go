@@ -8,6 +8,7 @@ package plugin
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	log "github.com/sirupsen/logrus"
@@ -20,7 +21,11 @@ type Settings struct {
 
 // Validate handles the settings validation of the plugin.
 func (p *Plugin) Validate() error {
-	// Validation of the settings.
+	// Verify the source url
+	webhook := p.settings.Webhook
+	if webhook == "" {
+		return fmt.Errorf("no webhook endpoint provided")
+	}
 	return nil
 }
 
