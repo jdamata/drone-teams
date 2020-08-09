@@ -68,7 +68,6 @@ func (p *Plugin) Execute() error {
 
 	// Make MS teams webhook post
 	jsonValue, _ := json.Marshal(card)
-	log.Info(p.settings.Webhook)
 	_, err := http.Post(p.settings.Webhook, "application/json", bytes.NewBuffer(jsonValue))
 	if err != nil {
 		log.Error("Failed to send request to teams webhook")
