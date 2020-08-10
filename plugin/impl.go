@@ -39,6 +39,10 @@ func (p *Plugin) Execute() error {
 	// Create list of card facts
 	facts := []MessageCardSectionFact{
 		{
+			Name:  "Repo Link",
+			Value: p.pipeline.Repo.Link,
+		},
+		{
 			Name:  "Git Author",
 			Value: p.pipeline.Commit.Author,
 		},
@@ -67,8 +71,8 @@ func (p *Plugin) Execute() error {
 		ThemeColor: themeColor,
 		Summary:    p.pipeline.Repo.Slug,
 		Sections: []MessageCardSection{{
-			ActivityTitle:    "Build status -> " + p.pipeline.Build.Status,
-			ActivitySubtitle: "Repo Name -> " + p.pipeline.Repo.HTTPURL,
+			ActivityTitle:    p.pipeline.Repo.Slug,
+			ActivitySubtitle: strings.ToUpper(p.pipeline.Build.Status),
 			ActivityImage:    "https://github.com/jdamata/drone-teams/raw/master/drone.png",
 			Markdown:         false,
 			Facts:            facts,
