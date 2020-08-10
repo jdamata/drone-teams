@@ -71,11 +71,11 @@ func (p *Plugin) Execute() error {
 		ThemeColor: themeColor,
 		Summary:    p.pipeline.Repo.Slug,
 		Sections: []MessageCardSection{{
-			ActivityTitle: p.pipeline.Repo.Slug + " - " + strings.ToUpper(p.pipeline.Build.Status),
-			// ActivitySubtitle: strings.ToUpper(p.pipeline.Build.Status),
-			ActivityImage: "https://github.com/jdamata/drone-teams/raw/master/drone.png",
-			Markdown:      false,
-			Facts:         facts,
+			ActivityTitle:    p.pipeline.Repo.Slug,
+			ActivitySubtitle: strings.ToUpper(p.pipeline.Build.Status),
+			ActivityImage:    "https://github.com/jdamata/drone-teams/raw/master/drone.png",
+			Markdown:         false,
+			Facts:            facts,
 		}},
 	}
 

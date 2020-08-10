@@ -29,8 +29,21 @@ docker build \
 
 ## Usage
 
-```
+```console
 docker run --rm \
   -e PLUGIN_WEBHOOK=<WEBHOOK ENDPOINT> \
   jdamata/drone-teams
+```
+
+## Drone Pipeline Usage
+
+```yaml
+- name: teams-webhook
+  image: jdamata/drone-teams:0.1.0
+  settings:
+    webhook: <WEBHOOK ENDPOINT>
+  when:
+    status:
+     - failure
+     - success
 ```
