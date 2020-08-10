@@ -55,10 +55,6 @@ func (p *Plugin) Execute() error {
 	if p.pipeline.Build.Status == "failure" {
 		themeColor = "FF5733"
 		facts = append(facts, MessageCardSectionFact{
-			Name:  "Failed Stages",
-			Value: strings.Join(p.pipeline.Build.FailedStages, " "),
-		})
-		facts = append(facts, MessageCardSectionFact{
 			Name:  "Failed Steps",
 			Value: strings.Join(p.pipeline.Build.FailedSteps, " "),
 		})
@@ -69,12 +65,12 @@ func (p *Plugin) Execute() error {
 		Type:       "MessageCard",
 		Context:    "http://schema.org/extensions",
 		ThemeColor: themeColor,
-		Summary:    p.pipeline.Build.Status,
+		Summary:    p.pipeline.Repo.Slug,
 		Sections: []MessageCardSection{{
 			ActivityTitle:    "Build status -> " + p.pipeline.Build.Status,
 			ActivitySubtitle: "Repo Name -> " + p.pipeline.Repo.HTTPURL,
 			ActivityImage:    "https://github.com/jdamata/drone-teams/raw/master/drone.png",
-			Markdown:         true,
+			Markdown:         false,
 			Facts:            facts,
 		}},
 	}

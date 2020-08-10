@@ -32,13 +32,5 @@ docker build \
 ```
 docker run --rm \
   -e PLUGIN_WEBHOOK=<WEBHOOK ENDPOINT> \
-  -e DRONE_BUILD_STATUS=Failed \
-  -e DRONE_BUILD_ACTION=test \
-  -e DRONE_REPO_NAME=test \
-  -e DRONE_COMMIT_AUTHOR=test \
-  -e DRONE_COMMIT_MESSAGE=test \
-  -e DRONE_COMMIT_LINK=test \
-  -v $(pwd):$(pwd) \
-  -w $(pwd) \
   jdamata/drone-teams
 ```
