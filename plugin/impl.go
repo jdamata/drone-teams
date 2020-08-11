@@ -19,6 +19,7 @@ import (
 // Settings for the plugin.
 type Settings struct {
 	Webhook string
+	Status  string
 }
 
 // Validate handles the settings validation of the plugin.
@@ -33,6 +34,11 @@ func (p *Plugin) Validate() error {
 		// Set webhook setting to ${DRONE_BRANCH}_teams_webhook
 		p.settings.Webhook = os.Getenv(branchWebhook)
 	}
+
+	if p.settings.Status == "" {
+		p.settings.Status = p.pipeline.Build.Status
+	}
+
 	return nil
 }
 
@@ -86,7 +92,7 @@ func (p *Plugin) Execute() error {
 		Summary:    p.pipeline.Repo.Slug,
 		Sections: []MessageCardSection{{
 			ActivityTitle:    p.pipeline.Repo.Slug,
-			ActivitySubtitle: strings.ToUpper(p.pipeline.Build.Status),
+			ActivitySubtitle: strings.ToUpper(p.settings.Status),
 			ActivityImage:    "https://github.com/jdamata/drone-teams/raw/master/drone.png",
 			Markdown:         false,
 			Facts:            facts,

@@ -19,5 +19,11 @@ func settingsFlags(settings *plugin.Settings) []cli.Flag {
 			EnvVars:     []string{"PLUGIN_WEBHOOK"},
 			Destination: &settings.Webhook,
 		},
+		&cli.StringFlag{
+			Name:        "status",
+			Usage:       "Overwrite the status value",
+			EnvVars:     []string{"PLUGIN_STATUS"},
+			Destination: &settings.Status,
+		},
 	}
 }
