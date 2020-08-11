@@ -31,7 +31,7 @@ func (p *Plugin) Validate() error {
 			return fmt.Errorf("no webhook endpoint provided")
 		}
 		// Set webhook setting to ${DRONE_BRANCH}_teams_webhook
-		p.settings.Webhook = branchWebhook
+		p.settings.Webhook = os.Getenv(branchWebhook)
 	}
 	return nil
 }
