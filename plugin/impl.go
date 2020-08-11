@@ -76,13 +76,13 @@ func (p *Plugin) Execute() error {
 		}}
 
 	// If build has failed, change card details
-	if p.pipeline.Build.Status == "failure" {
+	if p.settings.Status == "failure" {
 		themeColor = "FF5733"
 		facts = append(facts, MessageCardSectionFact{
 			Name:  "Failed Build Steps",
 			Value: strings.Join(p.pipeline.Build.FailedSteps, " "),
 		})
-	} else if p.pipeline.Build.Status == "building" {
+	} else if p.settings.Status == "building" {
 		themeColor = "002BFF"
 	}
 
