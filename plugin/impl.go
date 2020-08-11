@@ -82,6 +82,8 @@ func (p *Plugin) Execute() error {
 			Name:  "Failed Build Steps",
 			Value: strings.Join(p.pipeline.Build.FailedSteps, " "),
 		})
+	} else if p.pipeline.Build.Status == "building" {
+		themeColor = "002BFF"
 	}
 
 	// Create rich message card body
