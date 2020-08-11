@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -22,10 +23,15 @@ type Settings struct {
 
 // Validate handles the settings validation of the plugin.
 func (p *Plugin) Validate() error {
-	// Verify the source url
-	webhook := p.settings.Webhook
-	if webhook == "" {
-		return fmt.Errorf("no webhook endpoint provided")
+	// Verify the webhook endpoint
+	if p.settings.Webhook == "" {
+		// If webhook is undefined, check if the ${DRONE_BRANCH}_teams_webhook env var is defined.
+		branchWebhook := fmt.Sprintf("%s_teams_webhook", os.Getenv("DRONE_BRANCH"))
+		if os.Getenv(branchWebhook) == "" {
+			return fmt.Errorf("no webhook endpoint provided")
+		}
+		// Set webhook setting to ${DRONE_BRANCH}_teams_webhook
+		p.settings.Webhook = branchWebhook
 	}
 	return nil
 }
@@ -39,12 +45,20 @@ func (p *Plugin) Execute() error {
 	// Create list of card facts
 	facts := []MessageCardSectionFact{
 		{
+			Name:  "Started",
+			Value: p.pipeline.Build.Started.String(),
+		},
+		{
 			Name:  "Repo Link",
 			Value: p.pipeline.Repo.Link,
 		},
 		{
+			Name:  "Branch",
+			Value: p.pipeline.Build.Branch,
+		},
+		{
 			Name:  "Git Author",
-			Value: p.pipeline.Commit.Author,
+			Value: fmt.Sprintf("%s (%s)", p.pipeline.Commit.Author, p.pipeline.Commit.AuthorEmail),
 		},
 		{
 			Name:  "Commit Message",
