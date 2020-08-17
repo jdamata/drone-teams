@@ -39,11 +39,7 @@ docker run --rm \
 
 ```yaml
 - name: teams-webhook
-  image: jdamata/drone-teams:0.1.0
+  image: jdamata/drone-teams
   settings:
     webhook: <WEBHOOK ENDPOINT>
-  when:
-    status:
-     - failure
-     - success
 ```
