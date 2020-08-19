@@ -51,6 +51,10 @@ func (p *Plugin) Execute() error {
 	// Create list of card facts
 	facts := []MessageCardSectionFact{
 		{
+			Name:  "Build Number",
+			Value: fmt.Sprintf("%d", p.pipeline.Build.Number),
+		},
+		{
 			Name:  "Started",
 			Value: p.pipeline.Build.Started.String(),
 		},
@@ -69,11 +73,15 @@ func (p *Plugin) Execute() error {
 		{
 			Name:  "Commit Message",
 			Value: p.pipeline.Commit.Message,
-		},
-		{
+		}}
+
+	// If commit link is not null add to card
+	if p.pipeline.Commit.Link != "" {
+		facts = append(facts, MessageCardSectionFact{
 			Name:  "Commit Link",
 			Value: p.pipeline.Commit.Link,
-		}}
+		})
+	}
 
 	// If build has failed, change card details
 	if p.settings.Status == "failure" {

@@ -1,6 +1,5 @@
 package plugin
 
-//
 type MessageCard struct {
 	Type       string
 	Context    string
