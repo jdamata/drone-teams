@@ -35,6 +35,7 @@ func (p *Plugin) Validate() error {
 		p.settings.Webhook = os.Getenv(branchWebhook)
 	}
 
+	// If the plugin status setting is defined, use that as the build status
 	if p.settings.Status == "" {
 		p.settings.Status = p.pipeline.Build.Status
 	}
@@ -55,7 +56,7 @@ func (p *Plugin) Execute() error {
 			Value: fmt.Sprintf("%d", p.pipeline.Build.Number),
 		},
 		{
-			Name:  "Started",
+			Name:  "Time",
 			Value: p.pipeline.Build.Started.String(),
 		},
 		{
@@ -75,7 +76,7 @@ func (p *Plugin) Execute() error {
 			Value: p.pipeline.Commit.Message,
 		}}
 
-	// If commit link is not null add to card
+	// If commit link is not null add commit link fact to card
 	if p.pipeline.Commit.Link != "" {
 		facts = append(facts, MessageCardSectionFact{
 			Name:  "Commit Link",
@@ -83,13 +84,14 @@ func (p *Plugin) Execute() error {
 		})
 	}
 
-	// If build has failed, change card details
+	// If build has failed, change color to red and add failed step fact
 	if p.settings.Status == "failure" {
 		themeColor = "FF5733"
 		facts = append(facts, MessageCardSectionFact{
 			Name:  "Failed Build Steps",
 			Value: strings.Join(p.pipeline.Build.FailedSteps, " "),
 		})
+		// If the plugin status setting is defined and is "building", set the color to blue
 	} else if p.settings.Status == "building" {
 		themeColor = "002BFF"
 	}
