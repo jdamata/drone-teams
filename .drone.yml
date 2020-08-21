@@ -71,16 +71,6 @@ steps:
     event:
     - push
     - tag
-
-- name: teams-webhook
-  image: jdamata/drone-teams
-  settings:
-    webhook: 
-      from_secret: webhook
-  when:
-    event:
-    - push
-    - tag
     
 trigger:
   branch:
