@@ -43,3 +43,5 @@ docker run --rm \
   settings:
     webhook: <WEBHOOK ENDPOINT>
 ```
+
+![Sample](sample.png)
