@@ -82,6 +82,11 @@ func (p *Plugin) Execute() error {
 			Name:  "Commit Link",
 			Value: p.pipeline.Commit.Link,
 		})
+	} else if commitLink, present := os.LookupEnv("DRONE_COMMIT_LINK"); present && commitLink != "" {
+		facts = append(facts, MessageCardSectionFact{
+			Name:  "Commit Link",
+			Value: commitLink,
+		})
 	}
 
 	// If build has failed, change color to red and add failed step fact
