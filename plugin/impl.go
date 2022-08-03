@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -69,11 +70,15 @@ func (p *Plugin) Execute() error {
 		},
 		{
 			Name:  "Git Author",
-			Value: fmt.Sprintf("%s (%s)", p.pipeline.Commit.Author, p.pipeline.Commit.AuthorEmail),
+			Value: fmt.Sprintf("%s (%s)", p.pipeline.Commit.Author, p.pipeline.Commit.Author.Email),
 		},
 		{
-			Name:  "Commit Message",
-			Value: p.pipeline.Commit.Message,
+			Name:  "Commit Message Title",
+			Value: p.pipeline.Commit.Message.Title,
+		},
+		{
+			Name:  "Commit Message Body",
+			Value: p.pipeline.Commit.Message.Body,
 		}}
 
 	// If commit link is not null add commit link fact to card
@@ -87,6 +92,23 @@ func (p *Plugin) Execute() error {
 			Name:  "Commit Link",
 			Value: commitLink,
 		})
+	}
+
+	// If build link is not null add build link fact to card
+	if p.pipeline.Build.Link != "" && p.pipeline.Stage.Number > 0 {
+		facts = append(facts, MessageCardSectionFact{
+			Name:  "Build Link",
+			Value: "[" + p.pipeline.Build.Link + "/" + strconv.Itoa(p.pipeline.Stage.Number) + "](" + p.pipeline.Build.Link + "/" + strconv.Itoa(p.pipeline.Stage.Number) + ")",
+		})
+	} else {
+		buildLink, presentLink := os.LookupEnv("DRONE_BUILD_LINK")
+		buildStage, presentStage := os.LookupEnv("DRONE_STAGE_NUMBER")
+		if presentLink && presentStage && buildLink != "" && buildStage != "" {
+			facts = append(facts, MessageCardSectionFact{
+				Name:  "Build Link",
+				Value: "[" + buildLink + "/" + buildStage + "](" + buildLink + "/" + buildStage + ")",
+			})
+		}
 	}
 
 	// If build has failed, change color to red and add failed step fact
@@ -111,7 +133,7 @@ func (p *Plugin) Execute() error {
 			ActivityTitle:    p.pipeline.Repo.Slug,
 			ActivitySubtitle: strings.ToUpper(p.settings.Status),
 			ActivityImage:    "https://github.com/jdamata/drone-teams/raw/master/drone.png",
-			Markdown:         false,
+			Markdown:         true,
 			Facts:            facts,
 		}},
 	}
